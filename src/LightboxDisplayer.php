@@ -19,7 +19,7 @@ class LightboxDisplayer extends AbstractDisplayer
         $options = json_encode($this->options);
 
         return <<<SCRIPT
-$('.grid-popup-link').magnificPopup($options);
+$('.grid-popup-link').each(function(){ $(this).siblings().magnificPopup($options); });
 SCRIPT;
     }
 
