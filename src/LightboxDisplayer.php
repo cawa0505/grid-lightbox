@@ -11,7 +11,11 @@ use Illuminate\Support\Facades\Storage;
 class LightboxDisplayer extends AbstractDisplayer
 {
     public $options = [
-        'type' => 'image'
+        'type' => 'image',
+        'gallery' => [
+            'enabled' => true,
+            'navigateByImgClick' => true,
+        ],
     ];
 
     protected function script()
@@ -19,7 +23,9 @@ class LightboxDisplayer extends AbstractDisplayer
         $options = json_encode($this->options);
 
         return <<<SCRIPT
-$('.grid-popup-link').each(function(){ $(this).siblings().magnificPopup($options); });
+$('.column-grid-gallery').each(function(){ 
+    $(this).find('a').magnificPopup($options); 
+});
 SCRIPT;
     }
 
@@ -59,7 +65,7 @@ SCRIPT;
 
         Admin::script($this->script());
 
-        return collect((array)$this->value)->filter()->map(function ($path) use ($server, $width, $height, $class) {
+        return '<div class="column-grid-gallery">' . collect((array)$this->value)->filter()->map(function ($path) use ($server, $width, $height, $class) {
             if (url()->isValidUrl($path) || strpos($path, 'data:image') === 0) {
                 $src = $path;
             } elseif ($server) {
@@ -73,6 +79,6 @@ SCRIPT;
     <img src='$src' style='max-width:{$width}px;max-height:{$height}px' class='img {$class}' />
 </a>
 HTML;
-        })->implode('&nbsp;');
+        })->implode('&nbsp;') .'</div>';
     }
 }
