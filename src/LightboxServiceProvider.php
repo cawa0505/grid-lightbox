@@ -4,6 +4,7 @@ namespace Encore\Grid\Lightbox;
 
 use Encore\Admin\Admin;
 use Encore\Admin\Grid\Column;
+use Encore\Admin\Show;
 use Illuminate\Support\ServiceProvider;
 
 class LightboxServiceProvider extends ServiceProvider
@@ -31,6 +32,9 @@ class LightboxServiceProvider extends ServiceProvider
 
             Column::extend('lightbox', LightboxDisplayer::class);
             Column::extend('gallery', GalleryDisplayer::class);
+
+            Show::extend('lightbox', LightboxField::class);
+            Show::extend('gallery', GalleryField::class);
         });
     }
 }

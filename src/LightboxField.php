@@ -3,13 +3,15 @@
 namespace Encore\Grid\Lightbox;
 
 use Encore\Admin\Admin;
-use Encore\Admin\Grid\Displayers\AbstractDisplayer;
+use Encore\Admin\Show\AbstractField;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
-class LightboxDisplayer extends AbstractDisplayer
+class LightboxField extends AbstractField
 {
+    public $escape = false;
+
     public $options = [
         'type' => 'image',
     ];
@@ -19,7 +21,7 @@ class LightboxDisplayer extends AbstractDisplayer
         $options = json_encode($this->options);
 
         return <<<SCRIPT
-$('.column-grid-gallery').each(function(){ 
+$('.field-show-gallery').each(function(){ 
     $(this).find('a').magnificPopup($options); 
 });
 SCRIPT;
@@ -37,7 +39,7 @@ SCRIPT;
         ]);
     }
 
-    public function display(array $options = [])
+    public function render(array $options = [])
     {
         if (empty($this->value)) {
             return '';
@@ -61,7 +63,7 @@ SCRIPT;
 
         Admin::script($this->script());
 
-        return '<div class="column-grid-gallery">' . collect((array)$this->value)->filter()->map(function ($path) use ($server, $width, $height, $class) {
+        return '<div class="field-show-gallery">' . collect((array)$this->value)->filter()->map(function ($path) use ($server, $width, $height, $class) {
             if (url()->isValidUrl($path) || strpos($path, 'data:image') === 0) {
                 $src = $path;
             } elseif ($server) {
@@ -71,10 +73,10 @@ SCRIPT;
             }
 
             return <<<HTML
-<a href="$src" class="grid-popup-link">
+<a href="$src" class="show-field-popup-link">
     <img src="$src" style="max-width:{$width}px;max-height:{$height}px" class="img {$class}" />
 </a>
 HTML;
-        })->implode('&nbsp;') .'</div>';
+        })->implode('&nbsp;') . '</div>';
     }
 }
